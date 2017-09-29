@@ -22,6 +22,8 @@ log = logging.getLogger(__name__)
 
 import socket    # Basic TCP/IP communication on the internet
 import _thread   # Response computation runs concurrently with main program
+import os
+
 
 
 def listen(portnum):
@@ -97,8 +99,12 @@ def respond(sock):
         elif ".html" not in parts[1] or ".css" not in parts[1]:
             transmit(STATUS_FORBIDDEN, sock)
         else:
-            source_path = os.path.join(DOCROOT, parts[1])
-            log.debug("Source path: {}".format(source_path))
+            log.info(DOCROOT + " is the DOCROOT")
+            relative_path = parts[1]
+            relative_path = relative_path[1:]
+            log.info(relative_path + " is the relative path")
+            source_path = os.path.join(DOCROOT, relative_path)
+            log.info("Source path: {}".format(source_path))
             try:
                 with open(source_path, 'r', encoding='utf-8') as source:
                     for line in source:
@@ -149,8 +155,10 @@ def get_options():
 
 
 def main():
+    global DOCROOT
     options = get_options()
     port = options.PORT
+    DOCROOT = options.DOCROOT
     if options.DEBUG:
         log.setLevel(logging.DEBUG)
     sock = listen(port)
