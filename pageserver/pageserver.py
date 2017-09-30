@@ -6,11 +6,6 @@
     error handling and many other things to keep the illustration as simple
     as possible.
     
-    FIXME:
-    Currently this program always serves an ascii graphic of a cat.
-    Change it to serve files if they end with .html or .css, and are
-    located in ./pages  (where '.' is the directory from which this
-    program is run).
     """
 
 import config    # Configure from .ini files and command line
