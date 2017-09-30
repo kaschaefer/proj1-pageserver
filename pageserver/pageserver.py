@@ -99,7 +99,8 @@ def respond(sock):
         elif ".html" not in parts[1] and ".css" not in parts[1]: # Handle invalid file types
             transmit(STATUS_FORBIDDEN, sock)
         else:
-            relative_path = parts[1:] # Remove the forward slash from the file name
+            relative_path = parts[1] # Remove the forward slash from the file name
+            relative_path = relative_path[1:]
             source_path = os.path.join(DOCROOT, relative_path)
             try: 
                 with open(source_path, 'r', encoding='utf-8') as source:
