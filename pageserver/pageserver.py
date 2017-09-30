@@ -83,7 +83,7 @@ STATUS_NOT_IMPLEMENTED = "HTTP/1.0 401 Not Implemented\n\n"
 def respond(sock):
     """
         This server responds only to GET requests (not PUT, POST, or UPDATE).
-        Any valid GET request is answered with an ascii graphic of a cat.
+        Any valid GET request is answered with the requested file. 
         """
     sent = 0
     request = sock.recv(1024)  # We accept only short requests
@@ -94,20 +94,19 @@ def respond(sock):
     parts = request.split()
 
     if len(parts) > 1 and parts[0] == "GET":
-        if "~" in parts[1] or ".." in parts[1] or "//" in parts[1]:
+        if "~" in parts[1] or ".." in parts[1] or "//" in parts[1]: # Handle invalid paths
             transmit(STATUS_FORBIDDEN, sock)
-        elif ".html" not in parts[1] and ".css" not in parts[1]:
+        elif ".html" not in parts[1] and ".css" not in parts[1]: # Handle invalid file types
             transmit(STATUS_FORBIDDEN, sock)
         else:
-            relative_path = parts[1]
-            relative_path = relative_path[1:]
+            relative_path = parts[1:] # Remove the forward slash from the file name
             source_path = os.path.join(DOCROOT, relative_path)
-            try:
+            try: 
                 with open(source_path, 'r', encoding='utf-8') as source:
                     transmit(STATUS_OK, sock)
-                    for line in source:
+                    for line in source: # Transmit File One Line at A Time
                         transmit(line.strip(), sock)
-            except FileNotFoundError:
+            except FileNotFoundError: # File Not Found
                 transmit(STATUS_NOT_FOUND, sock)    
 
     else:
