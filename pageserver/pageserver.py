@@ -95,21 +95,16 @@ def respond(sock):
 
     if len(parts) > 1 and parts[0] == "GET":
         if "~" in parts[1] or ".." in parts[1] or "//" in parts[1]:
-            log.info("First if statement")
             transmit(STATUS_FORBIDDEN, sock)
         elif ".html" not in parts[1] and ".css" not in parts[1]:
-            log.info("Second if statement" + parts[1] + "\n")
             transmit(STATUS_FORBIDDEN, sock)
         else:
             relative_path = parts[1]
             relative_path = relative_path[1:]
-            log.info(relative_path + " is the relative path")
             source_path = os.path.join(DOCROOT, relative_path)
-            log.info("Source path: {}".format(source_path))
             try:
                 with open(source_path, 'r', encoding='utf-8') as source:
                     transmit(STATUS_OK, sock)
-                    log.info(" I made it to the source!\n")
                     for line in source:
                         transmit(line.strip(), sock)
             except FileNotFoundError:
